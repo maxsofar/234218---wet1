@@ -6,10 +6,7 @@
 #define UNTITLED_TREE_H
 
 #include <new>
-#include <algorithm>
 #include "Node.h"
-
-using std::max;
 
 template <class Key, class Value>
 class Tree {
@@ -30,6 +27,7 @@ public:
     //inOrder output to given array
     void inOrder(Node<Key, Value>* current, int* output, int& pos);
     Value& getMinNodeValue() const;
+    static int max(int a, int b);
 
     //for testing
     void setRoot(Node<Key, Value>* newRoot);
@@ -48,6 +46,12 @@ private:
     Node<Key, Value>* remove(const Key& key, Node<Key, Value>* current, bool* doesExist);
 
 };
+
+template<class Key, class Value>
+int Tree<Key, Value>::max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
 
 template <class Key, class Value>
 Tree<Key, Value>::Tree() : root(nullptr), minNode(nullptr), size(0) {}
