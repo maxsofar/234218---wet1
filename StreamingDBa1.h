@@ -28,7 +28,7 @@ private:
     Tree<int, Movie*> movies;
     Tree<int, User*> users;
     Tree<int, Group*> groups;
-    Tree<Movie*, Movie*> moviesByGenre[5];
+    Tree<Movie, Movie*> moviesByGenre[5];
 
 public:
 	// <DO-NOT-MODIFY> {
