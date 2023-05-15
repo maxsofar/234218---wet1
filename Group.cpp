@@ -41,7 +41,6 @@ void Group::removeUserViews(int* viewsByGenre)
     for (int i = 0; i < 4; ++i) {
         soloViewsByGenre[i] -= viewsByGenre[i];
     }
-    size--;
 }
 
 
@@ -87,7 +86,7 @@ int* Group::getViewsByGenre()
     return groupViewsByGenre;
 }
 
-void Group::insertUser(std::shared_ptr<User> user)
+void Group::insertUser(const std::shared_ptr<User>& user)
 {
     if (users == nullptr) {
         users = new Node<int, std::shared_ptr<User>>(user->getId(), user);
@@ -98,6 +97,7 @@ void Group::insertUser(std::shared_ptr<User> user)
         }
         curr->setRight(new Node<int, std::shared_ptr<User>>(user->getId(), user));
     }
+
     if (user->isVipUser()) {
         isVip = true;
         numVipUsers++;
@@ -108,6 +108,7 @@ void Group::removeUser(int userId)
 {
     Node<int, std::shared_ptr<User>>* curr = users;
     Node<int, std::shared_ptr<User>>* prev = nullptr;
+
     while (curr != nullptr) {
         if (curr->getKey() == userId) {
             if (curr->getValue()->isVipUser()) {
@@ -122,13 +123,13 @@ void Group::removeUser(int userId)
             } else {
                 prev->setRight(curr->getRight());
             }
+            delete curr;
+            size--;
             break;
         }
         prev = curr;
         curr = curr->getRight();
     }
-
-
 }
 
 void Group::updateUsersBeforeDelete()
@@ -136,7 +137,6 @@ void Group::updateUsersBeforeDelete()
     Node<int, std::shared_ptr<User>>* curr = users;
     while (curr != nullptr) {
         curr->getValue()->updateViewsAfterGroupDelete(groupViewsByGenre, groupViews);
-
         curr->getValue()->setInGroup(0, nullptr, 0);
         curr = curr->getRight();
     }
