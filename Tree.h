@@ -2,8 +2,8 @@
 // Created by Max on 05/05/2023.
 //
 
-#ifndef UNTITLED_TREE_H
-#define UNTITLED_TREE_H
+#ifndef WET1_TREE_H
+#define WET1_TREE_H
 
 #include <new>
 #include "Node.h"
@@ -11,56 +11,66 @@
 template <class Key, class Value>
 class Tree {
 public:
-    // Constructor
+    /*
+     * Constructors
+     */
     Tree();
-    // TODO: Destructor
     ~Tree();
-
+    Tree(const Tree& tree) = delete;
+    Tree& operator=(const Tree& tree) = delete;
+    /*
+     * Methods
+     */
     bool insert(const Key& key, const Value& value);
     bool remove(const Key& key);
     int getSize() const;
     Node<Key, Value>* getRoot() const;
     void deleteTree(Node<Key, Value>* current);
-    // TODO: maybe split to auxiliary function without current
     Node<Key, Value>* find(const Key& key, Node<Key, Value>* current) const;
     Node<Key, Value>* findMin(Node<Key, Value>* current) const;
-    //inOrder output to given array
     void inOrder(Node<Key, Value>* current, int* output, int& pos);
     Value& getMinNodeValue() const;
-    static int max(int a, int b);
-
-    //for testing
-    void setRoot(Node<Key, Value>* newRoot);
-    //-----------------
 
 private:
-    Node<Key, Value>* root;
-    Node<Key, Value>* minNode;
+    Node<Key, Value>* m_root;
+    Node<Key, Value>* m_minNode;
     int size;
+    /*
+     * Private Methods
+     */
     Node<Key, Value>* rotateLeft(Node<Key, Value>* current);
     Node<Key, Value>* rotateRight(Node<Key, Value>* current);
     Node<Key, Value>* balance(Node<Key, Value>* current);
-    // Recursive Insert
     Node<Key, Value>* insert(Node<Key, Value>* nodeToInsert, Node<Key, Value>* current, bool* doesExist);
-    // Recursive Remove
     Node<Key, Value>* remove(const Key& key, Node<Key, Value>* current, bool* doesExist);
-
+    static int max(int a, int b);
 };
+
+template <class Key, class Value>
+Tree<Key, Value>::Tree() : m_root(nullptr), m_minNode(nullptr), size(0) {}
+
+template<class Key, class Value>
+void Tree<Key, Value>::deleteTree(Node<Key, Value>* current)
+{
+    if (current == nullptr)
+        return;
+
+    deleteTree(current->getLeft());
+    deleteTree(current->getRight());
+    delete current;
+}
+
+template <class Key, class Value>
+Tree<Key, Value>::~Tree()
+{
+    delete m_minNode;
+    deleteTree(this->m_root);
+}
 
 template<class Key, class Value>
 int Tree<Key, Value>::max(int a, int b)
 {
     return (a > b) ? a : b;
-}
-
-template <class Key, class Value>
-Tree<Key, Value>::Tree() : root(nullptr), minNode(nullptr), size(0) {}
-
-template <class Key, class Value>
-Tree<Key, Value>::~Tree()
-{
-    delete minNode;
-    deleteTree(this->root);
 }
 
 template<class Key, class Value>
@@ -80,7 +90,7 @@ Node<Key, Value> *Tree<Key, Value>::findMin(Node<Key, Value> *current) const
 template<class Key, class Value>
 Value& Tree<Key, Value>::getMinNodeValue() const
 {
-    return minNode->getValue();
+    return m_minNode->getValue();
 }
 
 template<class Key, class Value>
@@ -89,8 +99,7 @@ int Tree<Key, Value>::getSize() const
     return size;
 }
 
-
-//TODO: maybe write as more general and not specified for movie
+//TODO: maybe write as more general and not specified for movies
 template<class Key, class Value>
 void Tree<Key, Value>::inOrder(Node<Key, Value>*current, int* output, int& pos)
 {
@@ -120,26 +129,9 @@ Node<Key, Value>* Tree<Key, Value>::find(const Key &key, Node<Key, Value>* curre
 }
 
 template<class Key, class Value>
-void Tree<Key, Value>::deleteTree(Node<Key, Value>* current)
-{
-    if (current == nullptr)
-        return;
-
-    deleteTree(current->getLeft());
-    deleteTree(current->getRight());
-    delete current;
-}
-
-template<class Key, class Value>
-void Tree<Key, Value>::setRoot(Node<Key, Value> *newRoot)
-{
-    this->root = newRoot;
-}
-
-template<class Key, class Value>
 Node<Key, Value> *Tree<Key, Value>::getRoot() const
 {
-    return this->root;
+    return this->m_root;
 }
 
 template<class Key, class Value>
@@ -229,22 +221,21 @@ template <class Key, class Value>
 bool Tree<Key, Value>::insert(const Key& key, const Value& value)
 {
     bool doesExist = false;
-    if (this->root == nullptr) {
-        this->root = new Node<Key, Value>(key, value);
-        this->minNode = new Node<Key, Value>(key, value);
+    if (this->m_root == nullptr) {
+        this->m_root = new Node<Key, Value>(key, value);
+        this->m_minNode = new Node<Key, Value>(key, value);
         this->size++;
     }
-    //TODO: check why causes bugs
-    else if (key == this->minNode->getKey()) {
+    else if (key == this->m_minNode->getKey()) {
         return false;
     }
     else {
         auto* node = new Node<Key, Value>(key, value);
-        if (key < this->minNode->getKey()) {
-            delete this->minNode;
-            this->minNode = new Node<Key, Value>(key, value);
+        if (key < this->m_minNode->getKey()) {
+            delete this->m_minNode;
+            this->m_minNode = new Node<Key, Value>(key, value);
         }
-        this->root = insert(node, this->root, &doesExist);
+        this->m_root = insert(node, this->m_root, &doesExist);
     }
     return doesExist;
 }
@@ -302,16 +293,16 @@ template <class Key, class Value>
 bool Tree<Key, Value>::remove(const Key& key)
 {
     bool doesExist = true;
-    this->root = remove(key, this->root, &doesExist);
-    if (key == this->minNode->getKey()) {
-        delete this->minNode;
-        Node<Key, Value>* temp = findMin(this->root);
+    this->m_root = remove(key, this->m_root, &doesExist);
+    if (key == this->m_minNode->getKey()) {
+        delete this->m_minNode;
+        Node<Key, Value>* temp = findMin(this->m_root);
         if (temp != nullptr) {
-            this->minNode = new Node<Key, Value>(temp->getKey(), temp->getValue());
+            this->m_minNode = new Node<Key, Value>(temp->getKey(), temp->getValue());
         }
     }
     return doesExist;
 }
 
-#endif //UNTITLED_TREE_H
+#endif //WET1_TREE_H
 

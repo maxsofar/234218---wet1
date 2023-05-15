@@ -4,50 +4,37 @@
 
 #include "Group.h"
 
-Group::Group(int groupId) : groupId(groupId), isVip(false), numVipUsers(0), size(0), groupViews(0), groupViewsByGenre{0},
-                            soloViewsByGenre{0}, users{nullptr}{}
+Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_views(0), m_viewsByGenre{0},
+                            m_soloViewsByGenre{0}, m_users{nullptr}{}
 
-int Group::getSize() const
+Group::~Group()
 {
-    return size;
+    Node<int, std::shared_ptr<User>>* curr = m_users;
+    while (curr != nullptr) {
+        Node<int, std::shared_ptr<User>>* temp = curr;
+        curr = curr->getRight();
+        delete temp;
+    }
 }
 
 bool Group::isVipGroup() const
 {
-    return isVip;
+    return m_isVip;
+}
+
+int Group::getTotalViews() const
+{
+    return m_views;
 }
 
 int Group::getId() const
 {
-    return groupId;
+    return m_groupId;
 }
 
-
-void Group::updateViewsSolo(Genre genre)
+int Group::getSize() const
 {
-    soloViewsByGenre[static_cast<int>(genre)]++;
-}
-
-void Group::updateViews(const int* newMemberViewsByGenre)
-{
-    size++;
-    for (int i = 0; i < 4; ++i) {
-        soloViewsByGenre[i] += newMemberViewsByGenre[i];
-    }
-}
-
-void Group::removeUserViews(int* viewsByGenre)
-{
-    for (int i = 0; i < 4; ++i) {
-        soloViewsByGenre[i] -= viewsByGenre[i];
-    }
-}
-
-
-void Group::updateGroupViews(Genre genre)
-{
-    groupViews++;
-    groupViewsByGenre[static_cast<int>(genre)]++;
+    return m_size;
 }
 
 Genre Group::getFavoriteGenre() const
@@ -55,15 +42,15 @@ Genre Group::getFavoriteGenre() const
     Genre favoriteGenre = Genre::NONE;
     int maxViews = 0;
     for (int i = 0; i < 4; ++i) {
-        int totalViews = groupViewsByGenre[i] +  soloViewsByGenre[i];
+        int totalViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
         if (totalViews > maxViews) {
-            maxViews = groupViewsByGenre[i];
+            maxViews = m_viewsByGenre[i];
             favoriteGenre = static_cast<Genre>(i);
         }
         else if (totalViews == maxViews)
             favoriteGenre = static_cast<Genre>(0);
-//        if (groupViewsByGenre[i] +  soloViewsByGenre[i] > maxViews) {
-//            maxViews = groupViewsByGenre[i];
+//        if (m_viewsByGenre[i] +  m_soloViewsByGenre[i] > maxViews) {
+//            maxViews = m_viewsByGenre[i];
 //            favoriteGenre = static_cast<Genre>(i);
 //        }
     }
@@ -71,27 +58,48 @@ Genre Group::getFavoriteGenre() const
     return favoriteGenre;
 }
 
-int Group::getTotalViews() const
+int Group::getViewsByGenre(Genre genre) const
 {
-    return groupViews;
-}
-
-int Group::getViewsByGenre(Genre genre)
-{
-    return groupViewsByGenre[static_cast<int>(genre)];
+    return m_viewsByGenre[static_cast<int>(genre)];
 }
 
 int* Group::getViewsByGenre()
 {
-    return groupViewsByGenre;
+    return m_viewsByGenre;
+}
+
+void Group::updateViewsSolo(Genre genre)
+{
+    m_soloViewsByGenre[static_cast<int>(genre)]++;
+}
+
+void Group::updateViews(const int* newMemberViewsByGenre)
+{
+    m_size++;
+    for (int i = 0; i < 4; ++i) {
+        m_soloViewsByGenre[i] += newMemberViewsByGenre[i];
+    }
+}
+
+void Group::removeUserViews(int* viewsByGenre)
+{
+    for (int i = 0; i < 4; ++i) {
+        m_soloViewsByGenre[i] -= viewsByGenre[i];
+    }
+}
+
+void Group::updateGroupViews(Genre genre)
+{
+    m_views++;
+    m_viewsByGenre[static_cast<int>(genre)]++;
 }
 
 void Group::insertUser(const std::shared_ptr<User>& user)
 {
-    if (users == nullptr) {
-        users = new Node<int, std::shared_ptr<User>>(user->getId(), user);
+    if (m_users == nullptr) {
+        m_users = new Node<int, std::shared_ptr<User>>(user->getId(), user);
     } else {
-        Node<int, std::shared_ptr<User>>* curr = users;
+        Node<int, std::shared_ptr<User>>* curr = m_users;
         while (curr->getRight() != nullptr) {
             curr = curr->getRight();
         }
@@ -99,32 +107,32 @@ void Group::insertUser(const std::shared_ptr<User>& user)
     }
 
     if (user->isVipUser()) {
-        isVip = true;
-        numVipUsers++;
+        m_isVip = true;
+        m_numVipUsers++;
     }
 }
 
 void Group::removeUser(int userId)
 {
-    Node<int, std::shared_ptr<User>>* curr = users;
+    Node<int, std::shared_ptr<User>>* curr = m_users;
     Node<int, std::shared_ptr<User>>* prev = nullptr;
 
     while (curr != nullptr) {
         if (curr->getKey() == userId) {
             if (curr->getValue()->isVipUser()) {
-                numVipUsers--;
-                if (numVipUsers == 0) {
-                    isVip = false;
+                m_numVipUsers--;
+                if (m_numVipUsers == 0) {
+                    m_isVip = false;
                 }
             }
 
             if (prev == nullptr) {
-                users = curr->getRight();
+                m_users = curr->getRight();
             } else {
                 prev->setRight(curr->getRight());
             }
             delete curr;
-            size--;
+            m_size--;
             break;
         }
         prev = curr;
@@ -134,22 +142,11 @@ void Group::removeUser(int userId)
 
 void Group::updateUsersBeforeDelete()
 {
-    Node<int, std::shared_ptr<User>>* curr = users;
+    Node<int, std::shared_ptr<User>>* curr = m_users;
     while (curr != nullptr) {
-        curr->getValue()->updateViewsAfterGroupDelete(groupViewsByGenre, groupViews);
-        curr->getValue()->setInGroup(0, nullptr, 0);
+        curr->getValue()->updateViewsAfterGroupDelete(m_viewsByGenre, m_views);
+        curr->getValue()->assignGroup(0, nullptr, 0);
         curr = curr->getRight();
     }
 }
-
-Group::~Group()
-{
-    Node<int, std::shared_ptr<User>>* curr = users;
-    while (curr != nullptr) {
-        Node<int, std::shared_ptr<User>>* temp = curr;
-        curr = curr->getRight();
-        delete temp;
-    }
-}
-
 

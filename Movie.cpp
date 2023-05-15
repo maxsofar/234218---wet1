@@ -3,44 +3,49 @@
 //
 
 #include "Movie.h"
-#include <iostream>
 
-Movie::Movie(int movieId, Genre genre, int views, bool vipOnly) : movieId(movieId), genre(genre), views(views),
-                                                                 vipOnly(vipOnly), rating(0) {}
-
-bool Movie::isVipOnly() const
-{
-    return vipOnly;
-}
-
-//TODO: how to round the number?
-void Movie::updateRating(int i)
-{
-    if (rating == 0)
-        rating = i;
-    else
-        rating = (rating + i) / 2;
-}
+Movie::Movie(int movieId, Genre genre, int views, bool vipOnly) : m_movieId(movieId), m_views(views), m_rating(0),
+m_vipOnly(vipOnly), m_genre(genre){}
 
 Genre Movie::getGenre() const
 {
-    return genre;
+    return m_genre;
 }
 
-//reversed comparison to perform the descending order
-//TODO: check if the comparison is correct or change the in-order order
+bool Movie::isVipOnly() const
+{
+    return m_vipOnly;
+}
+
+int Movie::getId() const
+{
+    return m_movieId;
+}
+
+void Movie::updateRating(int i)
+{
+    if (m_rating > 0)
+        m_rating = (m_rating + i) / 2;
+}
+
+void Movie::updateViews(int numOfViews)
+{
+    m_views += numOfViews;
+}
+
+//reversed comparison to use inorder traversal in BST
 bool Movie::operator<(const Movie& other) const
 {
-    if (this->rating > other.rating)
+    if (this->m_rating > other.m_rating)
         return true;
-    else if (this->rating == other.rating)
+    else if (this->m_rating == other.m_rating)
     {
-        if (this->views > other.views)
+        if (this->m_views > other.m_views)
             return true;
-        else if (this->views == other.views)
+        else if (this->m_views == other.m_views)
         {
             //moveId should be in ascending order
-            if (this->movieId < other.movieId)
+            if (this->m_movieId < other.m_movieId)
                 return true;
         }
     }
@@ -49,39 +54,26 @@ bool Movie::operator<(const Movie& other) const
 
 bool Movie::operator>(const Movie& other) const
 {
-    if (this->rating < other.rating)
+    if (this->m_rating < other.m_rating)
         return true;
-    else if (this->rating == other.rating)
+    else if (this->m_rating == other.m_rating)
     {
-        if (this->views < other.views)
+        if (this->m_views < other.m_views)
             return true;
-        else if (this->views == other.views)
+        else if (this->m_views == other.m_views)
         {
             //moveId should be in ascending order
-            if (this->movieId > other.movieId)
+            if (this->m_movieId > other.m_movieId)
                 return true;
         }
     }
     return false;
 }
 
-void Movie::updateViews(int numOfViews)
-{
-    views += numOfViews;
-}
-
 bool Movie::operator==(const Movie& other) const
 {
-    if (this->movieId == other.movieId)
+    if (this->m_movieId == other.m_movieId)
         return true;
     return false;
 }
-
-int Movie::getId() const
-{
-    return movieId;
-}
-
-Movie::~Movie()
-{}
 

@@ -3,7 +3,7 @@
 // Semester: 2023B (spring).
 // Wet Exercise #1.
 // 
-// Recommended TAB size to view this file: 8.
+// Recommended TAB m_size to view this file: 8.
 // 
 // The following main file is necessary to link and run your code.
 // This file is READ ONLY: even if you submit something else, the compiler ..
@@ -33,7 +33,6 @@ int main()
     bool b;
 
     freopen("example_test0.in", "r", stdin);
-//    freopen("test0.in", "r", stdin);
 #ifndef DEBUG
     freopen("test0.out", "w", stdout);
 #endif

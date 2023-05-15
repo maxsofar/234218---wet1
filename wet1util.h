@@ -3,7 +3,7 @@
 // Semester: 2023B (spring).
 // Wet Exercise #1.
 // 
-// Recommended TAB size to view this file: 8.
+// Recommended TAB m_size to view this file: 8.
 // 
 // The following header file contains necessary types for your code.
 // This file is READ ONLY: even if you submit something else, the compiler ..

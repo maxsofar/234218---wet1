@@ -3,7 +3,7 @@
 // Semester: 2023B (spring).
 // Wet Exercise #1.
 // 
-// Recommended TAB size to view this file: 8.
+// Recommended TAB m_size to view this file: 8.
 // 
 // The following header file contains all methods we expect you to implement.
 // You MAY add private methods and fields of your own.
@@ -22,15 +22,14 @@
 #include "Group.h"
 #include <memory>
 
+using std::shared_ptr;
 
 class streaming_database {
 private:
-    //TODO: consider smart pointers
-    //Tree<int, Movie*> movies;
-    Tree<int, std::shared_ptr<Movie>> movies;
-    Tree<int, std::shared_ptr<User>> users;
-    Tree<int, std::shared_ptr<Group>> groups;
-    Tree<Movie, std::shared_ptr<Movie>> moviesByGenre[5];
+    Tree<int, shared_ptr<Movie>> movies;
+    Tree<int, shared_ptr<User>> users;
+    Tree<int, shared_ptr<Group>> groups;
+    Tree<Movie, shared_ptr<Movie>> moviesByGenre[5];
 
 public:
 	// <DO-NOT-MODIFY> {

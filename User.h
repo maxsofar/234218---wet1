@@ -6,40 +6,51 @@
 #define WET_1_USER_H
 
 #include "wet1util.h"
-//#include "Group.h"
-
-
 
 class User {
 public:
-    // Constructor
+    /*
+     * Constructors
+     */
     User(int userId, bool isVip);
-    //Destructor
     ~User() = default;
+    User(const User&) = delete;
+    User& operator=(const User&) = delete;
+    /*
+     * Getters
+     */
     bool isVipUser() const;
     int getGroupId() const;
-    int getTotalViews() const;
+    int getViews() const;
     int getViewsByGenre(Genre genre) const;
     int* getViewsByGenre();
     bool isInGroup() const;
+    int getId() const;
+    int getTotalViewsBeforeJoined() const;
+    int getViewsBeforeJoined(Genre genre) const;
+    /*
+     * Setters
+     */
     void watchMovie(Genre genre);
-    void setInGroup(int id, const int* groupViewsByGenre, int groupViews);
-    int getViewsBeforeJoined();
-    int getViewsBeforeJoinedByGenre(Genre genre);
-    void updateViewsAfterGroupDelete(int* groupViewsByGenre, int groupViews);
-
-    const int getId();
+    void assignGroup(int groupId, const int* groupViewsByGenre, int groupViews);
+    void updateViewsAfterGroupDelete(const int* groupViewsByGenre, int groupViews);
 
 private:
-    int userId;
-    int groupId;
-    bool isVip;
-    int totalViews;
-    int totalViewsBeforeJoined;
-    int viewsByGenre[4];
-    int groupViewsBeforeJoined[4];
-    //TODO: consider deleting and using  groupId == 0 instead
-    bool inGroup;
+    int m_userId;
+    int m_groupId;
+    bool m_isVip;
+    bool m_isInGroup;
+    /*
+     * The following fields hold the user's solo views.
+     */
+    int m_views;
+    int m_viewsByGenre[4];
+    /*
+     * The following fields hold the views of the group the user is in before he joined the group.
+     * When the group is deleted, the user's views are updated according to these fields.
+     */
+    int m_totalViewsBeforeJoined;
+    int m_groupViewsBeforeJoined[4];
 };
 
 

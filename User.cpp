@@ -4,95 +4,83 @@
 
 #include "User.h"
 
-
-User::User(int userId, bool isVip) : userId(userId), groupId(0), isVip(isVip), totalViews(0), totalViewsBeforeJoined(0),
-                                    viewsByGenre{0}, groupViewsBeforeJoined{0}, inGroup(false) {}
+User::User(int userId, bool isVip) : m_userId(userId), m_groupId(0), m_isVip(isVip), m_isInGroup(false), m_views(0),
+m_viewsByGenre{0}, m_totalViewsBeforeJoined(0), m_groupViewsBeforeJoined{0} {}
 
 bool User::isVipUser() const
 {
-    return isVip;
-}
-
-int User::getTotalViews() const
-{
-    return totalViews;
-}
-
-int User::getViewsByGenre(Genre genre) const
-{
-    return viewsByGenre[static_cast<int>(genre)];
-}
-
-bool User::isInGroup() const
-{
-    return inGroup;
-}
-
-
-void User::watchMovie(Genre genre)
-{
-    totalViews++;
-    viewsByGenre[static_cast<int>(genre)]++;
-}
-
-void User::setInGroup(int id, const int* groupViewsByGenre, int groupViews)
-{
-    this->groupId = id;
-    this->totalViewsBeforeJoined = groupViews;
-    if (groupViewsByGenre == nullptr) {
-        for (int i = 0; i < 4; ++i) {
-                    this->groupViewsBeforeJoined[i] = 0;
-        }
-        inGroup = false;
-    } else {
-        for (int i = 0; i < 4; ++i) {
-            this->groupViewsBeforeJoined[i] = groupViewsByGenre[i];
-        }
-        inGroup = true;
-    }
-
-}
-
-//{
-//    this->groupId = group->getId();
-//    this->totalViewsBeforeJoined = group->getTotalViews();
-//    for (int i = 0; i < 4; ++i) {
-//        this->groupViewsBeforeJoined[i] = group->getViewsByGenre(static_cast<Genre>(i));
-//    }
-//    inGroup = true;
-//}
-
-int* User::getViewsByGenre()
-{
-    return viewsByGenre;
+    return m_isVip;
 }
 
 int User::getGroupId() const
 {
-    return groupId;
+    return m_groupId;
 }
 
-int User::getViewsBeforeJoined()
+int User::getViews() const
 {
-    return totalViewsBeforeJoined;
+    return m_views;
 }
 
-int User::getViewsBeforeJoinedByGenre(Genre genre)
+int User::getViewsByGenre(Genre genre) const
 {
-    return groupViewsBeforeJoined[static_cast<int>(genre)];
+    return m_viewsByGenre[static_cast<int>(genre)];
 }
 
-const int User::getId()
+bool User::isInGroup() const
 {
-    return userId;
+    return m_isInGroup;
 }
 
-void User::updateViewsAfterGroupDelete(int* groupViewsByGenre, int groupViews)
+int User::getId() const
 {
-    for (int i = 0; i < 4; ++i) {
-        this->viewsByGenre[i] += groupViewsByGenre[i] - this->groupViewsBeforeJoined[i];
+    return m_userId;
+}
+
+int User::getTotalViewsBeforeJoined() const
+{
+    return m_totalViewsBeforeJoined;
+}
+
+int User::getViewsBeforeJoined(Genre genre) const
+{
+    return m_groupViewsBeforeJoined[static_cast<int>(genre)];
+}
+
+void User::watchMovie(Genre genre)
+{
+    m_views++;
+    m_viewsByGenre[static_cast<int>(genre)]++;
+}
+
+void User::assignGroup(int groupId, const int* groupViewsByGenre, int groupViews)
+{
+    this->m_groupId = groupId;
+    this->m_totalViewsBeforeJoined = groupViews;
+    if (groupViewsByGenre == nullptr) {
+        for (int& i : this->m_groupViewsBeforeJoined)
+            i = 0;
+
+        m_isInGroup = false;
+    } else {
+        for (int i = 0; i < 4; ++i)
+            this->m_groupViewsBeforeJoined[i] = groupViewsByGenre[i];
+
+        m_isInGroup = true;
     }
 
-    this->totalViews += groupViews - this->totalViewsBeforeJoined;
+}
+
+int* User::getViewsByGenre()
+{
+    return m_viewsByGenre;
+}
+
+void User::updateViewsAfterGroupDelete(const int* groupViewsByGenre, int groupViews)
+{
+    for (int i = 0; i < 4; ++i)
+        this->m_viewsByGenre[i] += groupViewsByGenre[i] - this->m_groupViewsBeforeJoined[i];
+
+    this->m_views += groupViews - this->m_totalViewsBeforeJoined;
 }
 
