@@ -33,6 +33,7 @@ int main()
     bool b;
 
     freopen("example_test0.in", "r", stdin);
+//    freopen("test0.in", "r", stdin);
 #ifndef DEBUG
     freopen("test0.out", "w", stdout);
 #endif

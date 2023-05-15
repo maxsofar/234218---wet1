@@ -41,7 +41,6 @@ void Group::removeUserViews(int* viewsByGenre)
     for (int i = 0; i < 4; ++i) {
         soloViewsByGenre[i] -= viewsByGenre[i];
     }
-    size--;
 }
 
 
@@ -87,17 +86,18 @@ int* Group::getViewsByGenre()
     return groupViewsByGenre;
 }
 
-void Group::insertUser(User *user)
+void Group::insertUser(const std::shared_ptr<User>& user)
 {
     if (users == nullptr) {
-        users = new Node<int, User*>(user->getId(), user);
+        users = new Node<int, std::shared_ptr<User>>(user->getId(), user);
     } else {
-        Node<int, User*>* curr = users;
+        Node<int, std::shared_ptr<User>>* curr = users;
         while (curr->getRight() != nullptr) {
             curr = curr->getRight();
         }
-        curr->setRight(new Node<int, User*>(user->getId(), user));
+        curr->setRight(new Node<int, std::shared_ptr<User>>(user->getId(), user));
     }
+
     if (user->isVipUser()) {
         isVip = true;
         numVipUsers++;
@@ -106,8 +106,9 @@ void Group::insertUser(User *user)
 
 void Group::removeUser(int userId)
 {
-    Node<int, User*>* curr = users;
-    Node<int, User*>* prev = nullptr;
+    Node<int, std::shared_ptr<User>>* curr = users;
+    Node<int, std::shared_ptr<User>>* prev = nullptr;
+
     while (curr != nullptr) {
         if (curr->getKey() == userId) {
             if (curr->getValue()->isVipUser()) {
@@ -122,21 +123,20 @@ void Group::removeUser(int userId)
             } else {
                 prev->setRight(curr->getRight());
             }
+            delete curr;
+            size--;
             break;
         }
         prev = curr;
         curr = curr->getRight();
     }
-
-
 }
 
 void Group::updateUsersBeforeDelete()
 {
-    Node<int, User*>* curr = users;
+    Node<int, std::shared_ptr<User>>* curr = users;
     while (curr != nullptr) {
         curr->getValue()->updateViewsAfterGroupDelete(groupViewsByGenre, groupViews);
-
         curr->getValue()->setInGroup(0, nullptr, 0);
         curr = curr->getRight();
     }
@@ -144,9 +144,9 @@ void Group::updateUsersBeforeDelete()
 
 Group::~Group()
 {
-    Node<int, User*>* curr = users;
+    Node<int, std::shared_ptr<User>>* curr = users;
     while (curr != nullptr) {
-        Node<int, User*>* temp = curr;
+        Node<int, std::shared_ptr<User>>* temp = curr;
         curr = curr->getRight();
         delete temp;
     }

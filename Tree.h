@@ -29,7 +29,7 @@ public:
     Node<Key, Value>* findMin(Node<Key, Value>* current) const;
     //inOrder output to given array
     void inOrder(Node<Key, Value>* current, int* output, int& pos);
-    int getMinNodeValue() const;
+    Value& getMinNodeValue() const;
 
     //for testing
     void setRoot(Node<Key, Value>* newRoot);
@@ -74,7 +74,7 @@ Node<Key, Value> *Tree<Key, Value>::findMin(Node<Key, Value> *current) const
 }
 
 template<class Key, class Value>
-int Tree<Key, Value>::getMinNodeValue() const
+Value& Tree<Key, Value>::getMinNodeValue() const
 {
     return minNode->getValue();
 }
@@ -85,6 +85,8 @@ int Tree<Key, Value>::getSize() const
     return size;
 }
 
+
+//TODO: maybe write as more general and not specified for movie
 template<class Key, class Value>
 void Tree<Key, Value>::inOrder(Node<Key, Value>*current, int* output, int& pos)
 {
@@ -92,7 +94,7 @@ void Tree<Key, Value>::inOrder(Node<Key, Value>*current, int* output, int& pos)
         return;
 
     inOrder(current->getLeft(), output, pos);
-    output[pos] = current->getValue();
+    output[pos] = current->getValue()->getId();
     pos++;
     inOrder(current->getRight(), output, pos);
 

@@ -3,6 +3,7 @@
 //
 
 #include "Movie.h"
+#include <iostream>
 
 Movie::Movie(int movieId, Genre genre, int views, bool vipOnly) : movieId(movieId), genre(genre), views(views),
                                                                  vipOnly(vipOnly), rating(0) {}
@@ -75,4 +76,12 @@ bool Movie::operator==(const Movie& other) const
         return true;
     return false;
 }
+
+int Movie::getId() const
+{
+    return movieId;
+}
+
+Movie::~Movie()
+{}
 
