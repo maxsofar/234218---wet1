@@ -20,15 +20,17 @@
 #include "Movie.h"
 #include "User.h"
 #include "Group.h"
+#include <memory>
 
 
 class streaming_database {
 private:
     //TODO: consider smart pointers
-    Tree<int, Movie*> movies;
-    Tree<int, User*> users;
-    Tree<int, Group*> groups;
-    Tree<Movie, Movie*> moviesByGenre[5];
+    //Tree<int, Movie*> movies;
+    Tree<int, std::shared_ptr<Movie>> movies;
+    Tree<int, std::shared_ptr<User>> users;
+    Tree<int, std::shared_ptr<Group>> groups;
+    Tree<Movie, std::shared_ptr<Movie>> moviesByGenre[5];
 
 public:
 	// <DO-NOT-MODIFY> {

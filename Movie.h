@@ -13,7 +13,7 @@ public:
     // Constructor
     Movie(int movieId, Genre genre, int views, bool vipOnly);
     // Destructor
-    ~Movie() = default;
+    ~Movie();
     Genre getGenre() const;
     bool isVipOnly() const;
     void updateRating(int i);

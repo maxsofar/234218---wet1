@@ -1,10 +1,9 @@
 //
 // Created by Max on 05/05/2023.
 //
-
+#include <iostream>
 #ifndef WET1_NODE_H
 #define WET1_NODE_H
-
 
 template <class Key, class Value>
 class Node {
@@ -35,9 +34,7 @@ private:
 
 template<class Key, class Value>
 Node<Key, Value>::~Node()
-{
-    //delete value;
-}
+{}
 
 
 template <class Key, class Value>
