@@ -76,3 +76,8 @@ bool Movie::operator==(const Movie& other) const
     return false;
 }
 
+int Movie::getId() const
+{
+    return movieId;
+}
+

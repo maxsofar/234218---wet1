@@ -20,6 +20,7 @@ public:
     bool operator<(const Movie& other) const;
     bool operator>(const Movie& other) const;
     bool operator==(const Movie& other) const;
+    int getId() const;
     void updateViews(int numOfViews);
 
 private:

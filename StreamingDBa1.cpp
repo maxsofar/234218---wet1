@@ -22,8 +22,8 @@ StatusType streaming_database::add_movie(int movieId, Genre genre, int views, bo
             delete movie;
             return StatusType::FAILURE;
         }
-        this->moviesByGenre[static_cast<int>(genre)].insert(*movie, movieId);
-        this->moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movieId);
+        this->moviesByGenre[static_cast<int>(genre)].insert(movie, movie);
+        this->moviesByGenre[static_cast<int>(Genre::NONE)].insert(movie, movie);
     } catch (std::bad_alloc& e) {
         delete movie;
         return StatusType::ALLOCATION_ERROR;
@@ -44,8 +44,8 @@ StatusType streaming_database::remove_movie(int movieId)
 
     try {
         Movie* movie = movieNode->getValue();
-        moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
-        moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
+        moviesByGenre[static_cast<int>(movie->getGenre())].remove(movie);
+        moviesByGenre[static_cast<int>(Genre::NONE)].remove(movie);
         this->movies.remove(movieId);
     } catch (std::bad_alloc& e) {
         return StatusType::ALLOCATION_ERROR;
@@ -193,8 +193,8 @@ StatusType streaming_database::user_watch(int userId, int movieId)
 
     User* user = userNode->getValue();
     Movie* movie = movieNode->getValue();
-    moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
-    moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
+    moviesByGenre[static_cast<int>(movie->getGenre())].remove(movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].remove(movie);
     user->watchMovie(movieNode->getValue()->getGenre());
     movieNode->getValue()->updateViews(1);
     if (user->isInGroup()) {
@@ -204,8 +204,8 @@ StatusType streaming_database::user_watch(int userId, int movieId)
 
 
 
-    moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movieId);
-    moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movieId);
+    moviesByGenre[static_cast<int>(movie->getGenre())].insert(movie, movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].insert(movie, movie);
     //---------------------------------------------
 
     return StatusType::SUCCESS;
@@ -230,14 +230,14 @@ StatusType streaming_database::group_watch(int groupId,int movieId)
     Movie* movie = movieNode->getValue();
     Group* group = groupNode->getValue();
 
-    moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
-    moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
+    moviesByGenre[static_cast<int>(movie->getGenre())].remove(movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].remove(movie);
 
     group->updateGroupViews(movie->getGenre());
     movie->updateViews(group->getSize());
 
-    moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movieId);
-    moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movieId);
+    moviesByGenre[static_cast<int>(movie->getGenre())].insert(movie, movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].insert(movie, movie);
     //---------------------------------------------
 	return StatusType::SUCCESS;
 }
@@ -265,7 +265,7 @@ StatusType streaming_database::get_all_movies(Genre genre, int* const output)
     }
 
     int pos = 0;
-    Node<Movie, int>* root = moviesByGenre[static_cast<int>(genre)].getRoot();
+    Node<Movie*, Movie*>* root = moviesByGenre[static_cast<int>(genre)].getRoot();
     moviesByGenre[static_cast<int>(genre)].inOrder(root, output, pos);
 
     return StatusType::SUCCESS;
@@ -318,11 +318,11 @@ StatusType streaming_database::rate_movie(int userId, int movieId, int rating)
     Movie* movie = movieNode->getValue();
     if (rating > 0) {
         //TODO: consider making separate function for this i.e. updateGenreTree
-        moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
-        moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
+        moviesByGenre[static_cast<int>(movie->getGenre())].remove(movie);
+        moviesByGenre[static_cast<int>(Genre::NONE)].remove(movie);
         movie->updateRating(rating);
-        moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movieId);
-        moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movieId);
+        moviesByGenre[static_cast<int>(movie->getGenre())].insert(movie, movie);
+        moviesByGenre[static_cast<int>(Genre::NONE)].insert(movie, movie);
     }
     //---------------------------------------------
     return StatusType::SUCCESS;
@@ -343,6 +343,7 @@ output_t<int> streaming_database::get_group_recommendation(int groupId)
         return StatusType::FAILURE;
 
     //reversed order in genre trees//
-    return this->moviesByGenre[static_cast<int>(favoriteGenre)].getMinNodeValue();
+    Movie* movie = this->moviesByGenre[static_cast<int>(favoriteGenre)].getMinNodeValue();
+    return movie->getId();
 }
 
