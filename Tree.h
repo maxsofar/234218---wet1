@@ -5,8 +5,8 @@
 #ifndef WET1_TREE_H
 #define WET1_TREE_H
 
-#include <new>
 #include "Node.h"
+#include "memory"
 
 template <class Key, class Value>
 class Tree {
@@ -33,7 +33,7 @@ public:
 
 private:
     Node<Key, Value>* m_root;
-    Node<Key, Value>* m_minNode;
+    std::unique_ptr<Node<Key, Value>> m_minNode;
     int size;
     /*
      * Private Methods
@@ -63,7 +63,7 @@ void Tree<Key, Value>::deleteTree(Node<Key, Value>* current)
 template <class Key, class Value>
 Tree<Key, Value>::~Tree()
 {
-    delete m_minNode;
+    //delete m_minNode;
     deleteTree(this->m_root);
 }
 
@@ -119,10 +119,10 @@ Node<Key, Value>* Tree<Key, Value>::find(const Key &key, Node<Key, Value>* curre
     if (current == nullptr) {
         return nullptr;
     }
-    if (current->getKey() == key) {
+    if (key == current->getKey()) {
         return current;
     }
-    if (current->getKey() > key) {
+    if (key < current->getKey()) {
         return find(key, current->getLeft());
     }
     return find(key, current->getRight());
@@ -223,17 +223,16 @@ bool Tree<Key, Value>::insert(const Key& key, const Value& value)
     bool doesExist = false;
     if (this->m_root == nullptr) {
         this->m_root = new Node<Key, Value>(key, value);
-        this->m_minNode = new Node<Key, Value>(key, value);
+        this->m_minNode = std::make_unique<Node<Key, Value>>(key, value);
         this->size++;
     }
     else if (key == this->m_minNode->getKey()) {
-        return false;
+        return true;
     }
     else {
         auto* node = new Node<Key, Value>(key, value);
         if (key < this->m_minNode->getKey()) {
-            delete this->m_minNode;
-            this->m_minNode = new Node<Key, Value>(key, value);
+            this->m_minNode = std::make_unique<Node<Key, Value>>(key, value);
         }
         this->m_root = insert(node, this->m_root, &doesExist);
     }
@@ -295,10 +294,9 @@ bool Tree<Key, Value>::remove(const Key& key)
     bool doesExist = true;
     this->m_root = remove(key, this->m_root, &doesExist);
     if (key == this->m_minNode->getKey()) {
-        delete this->m_minNode;
         Node<Key, Value>* temp = findMin(this->m_root);
         if (temp != nullptr) {
-            this->m_minNode = new Node<Key, Value>(temp->getKey(), temp->getValue());
+            this->m_minNode = std::make_unique<Node<Key, Value>>(temp->getKey(), temp->getValue());
         }
     }
     return doesExist;

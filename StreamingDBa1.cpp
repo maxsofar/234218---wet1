@@ -127,11 +127,12 @@ StatusType streaming_database::remove_group(int groupId)
     if (groupId <= 0)
         return StatusType::INVALID_INPUT;
 
-    shared_ptr<Group> group = this->groups.find(groupId, this->groups.getRoot())->getValue();
-    if (group == nullptr)
+    //shared_ptr<Group> group = this->groups.find(groupId, this->groups.getRoot())->getValue();
+    Node<int, shared_ptr<Group>>* groupNode= this->groups.find(groupId, this->groups.getRoot());
+    if (groupNode == nullptr)
         return StatusType::FAILURE;
     else
-        group->updateUsersBeforeDelete();
+        groupNode->getValue()->updateUsersBeforeDelete();
 
     try {
         if (!this->groups.remove(groupId))
