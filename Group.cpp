@@ -44,15 +44,11 @@ Genre Group::getFavoriteGenre() const
     for (int i = 0; i < 4; ++i) {
         int totalViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
         if (totalViews > maxViews) {
-            maxViews = m_viewsByGenre[i];
+            maxViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
             favoriteGenre = static_cast<Genre>(i);
         }
         else if (totalViews == maxViews)
             favoriteGenre = static_cast<Genre>(0);
-//        if (m_viewsByGenre[i] +  m_soloViewsByGenre[i] > maxViews) {
-//            maxViews = m_viewsByGenre[i];
-//            favoriteGenre = static_cast<Genre>(i);
-//        }
     }
 
     return favoriteGenre;

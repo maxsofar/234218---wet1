@@ -24,7 +24,7 @@ int Movie::getId() const
 
 void Movie::updateRating(int i)
 {
-    if (m_rating > 0)
+    if (i > 0)
         m_rating = (m_rating + i) / 2;
 }
 

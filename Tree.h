@@ -8,6 +8,8 @@
 #include "Node.h"
 #include "memory"
 
+using std::unique_ptr;
+
 template <class Key, class Value>
 class Tree {
 public:
@@ -33,7 +35,7 @@ public:
 
 private:
     Node<Key, Value>* m_root;
-    std::unique_ptr<Node<Key, Value>> m_minNode;
+    unique_ptr<Node<Key, Value>> m_minNode;
     int size;
     /*
      * Private Methods
@@ -63,7 +65,6 @@ void Tree<Key, Value>::deleteTree(Node<Key, Value>* current)
 template <class Key, class Value>
 Tree<Key, Value>::~Tree()
 {
-    //delete m_minNode;
     deleteTree(this->m_root);
 }
 
@@ -223,7 +224,7 @@ bool Tree<Key, Value>::insert(const Key& key, const Value& value)
     bool doesExist = false;
     if (this->m_root == nullptr) {
         this->m_root = new Node<Key, Value>(key, value);
-        this->m_minNode = std::make_unique<Node<Key, Value>>(key, value);
+        this->m_minNode = unique_ptr<Node<Key, Value>>(new Node<Key, Value>(key, value));
         this->size++;
     }
     else if (key == this->m_minNode->getKey()) {
@@ -232,7 +233,7 @@ bool Tree<Key, Value>::insert(const Key& key, const Value& value)
     else {
         auto* node = new Node<Key, Value>(key, value);
         if (key < this->m_minNode->getKey()) {
-            this->m_minNode = std::make_unique<Node<Key, Value>>(key, value);
+            this->m_minNode = unique_ptr<Node<Key, Value>>(new Node<Key, Value>(key, value));
         }
         this->m_root = insert(node, this->m_root, &doesExist);
     }
@@ -296,7 +297,7 @@ bool Tree<Key, Value>::remove(const Key& key)
     if (key == this->m_minNode->getKey()) {
         Node<Key, Value>* temp = findMin(this->m_root);
         if (temp != nullptr) {
-            this->m_minNode = std::make_unique<Node<Key, Value>>(temp->getKey(), temp->getValue());
+            this->m_minNode = unique_ptr<Node<Key, Value>>(new Node<Key, Value>(temp->getKey(), temp->getValue()));
         }
     }
     return doesExist;
