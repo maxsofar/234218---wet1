@@ -37,7 +37,7 @@ public:
 private:
     int m_movieId;
     int m_views;
-    int m_rating;
+    double m_rating;
     bool m_vipOnly;
     Genre m_genre;
     int m_numOfRatings;

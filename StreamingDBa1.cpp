@@ -309,7 +309,6 @@ StatusType streaming_database::rate_movie(int userId, int movieId, int rating)
 
     shared_ptr<Movie> movie = movieNode->getValue();
     if (rating > 0) {
-        //TODO: consider making separate function for this i.e. updateGenreTree
         moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
         moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
         movie->updateRating(rating);
