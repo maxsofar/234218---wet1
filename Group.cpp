@@ -4,8 +4,8 @@
 
 #include "Group.h"
 
-Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_views(0), m_viewsByGenre{0},
-                            m_soloViewsByGenre{0}, m_users{nullptr}{}
+Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_groupViewsCounter{0}, m_viewsByGenre{0},
+                            m_soloViewsByGenre{0}, m_users{nullptr}, m_numUsersNotYetWatched(0){}
 
 Group::~Group()
 {
@@ -22,9 +22,14 @@ bool Group::isVipGroup() const
     return m_isVip;
 }
 
-int Group::getTotalViews() const
+int Group::getTotalGroupViews() const
 {
-    return m_views;
+    int totalViews = 0;
+    for (int i : m_groupViewsCounter) {
+        totalViews += i;
+    }
+
+    return totalViews;
 }
 
 int Group::getId() const
@@ -42,7 +47,7 @@ Genre Group::getFavoriteGenre() const
     auto favoriteGenre = static_cast<Genre>(0);
     int maxViews = 0;
     for (int i = 0; i < 4; ++i) {
-        int totalViews = (m_viewsByGenre[i] * m_size) + m_soloViewsByGenre[i];
+        int totalViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
         if (totalViews > maxViews) {
             maxViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
             favoriteGenre = static_cast<Genre>(i);
@@ -62,31 +67,39 @@ int* Group::getViewsByGenre()
     return m_viewsByGenre;
 }
 
-void Group::updateViewsSolo(Genre genre)
+int Group::getNetSize() const
+{
+    return m_size - m_numUsersNotYetWatched;
+}
+
+void Group::soloWatch(Genre genre)
 {
     m_soloViewsByGenre[static_cast<int>(genre)]++;
 }
 
 void Group::updateViews(const int* newMemberViewsByGenre)
 {
-    m_size++;
     for (int i = 0; i < 4; ++i) {
         m_soloViewsByGenre[i] += newMemberViewsByGenre[i];
     }
 }
 
-void Group::removeUserViews(int* viewsByGenre)
+void Group::removeUserViews(const shared_ptr<User>& user)
 {
+    int* viewsByGenre = user->getViewsByGenre();
     for (int i = 0; i < 4; ++i) {
         m_soloViewsByGenre[i] -= viewsByGenre[i];
+        int viewsGained = user->getGroupCounterBeforeJoined(static_cast<Genre>(i)) - m_groupViewsCounter[i];
+        m_viewsByGenre[i] -= viewsGained;
     }
 }
 
-void Group::updateGroupViews(Genre genre)
+void Group::groupWatch(Genre genre)
 {
-    m_views++;
-    m_viewsByGenre[static_cast<int>(genre)]++;
-//    m_viewsByGenre[static_cast<int>(genre)] += m_size;
+    //TODO: check if both needed
+    m_groupViewsCounter[static_cast<int>(genre)]++;
+    m_viewsByGenre[static_cast<int>(genre)] += m_size;
+    m_numUsersNotYetWatched = 0;
 }
 
 void Group::insertUser(const std::shared_ptr<User>& user)
@@ -105,6 +118,9 @@ void Group::insertUser(const std::shared_ptr<User>& user)
         m_isVip = true;
         m_numVipUsers++;
     }
+    m_size++;
+    m_numUsersNotYetWatched++;
+
 }
 
 void Group::removeUser(int userId)
@@ -128,6 +144,7 @@ void Group::removeUser(int userId)
             }
             delete curr;
             m_size--;
+            //TODO:check what about notYetWatched
             break;
         }
         prev = curr;
@@ -139,9 +156,19 @@ void Group::updateUsersBeforeDelete()
 {
     Node<int, std::shared_ptr<User>>* curr = m_users;
     while (curr != nullptr) {
-        curr->getValue()->updateViewsAfterGroupDelete(m_viewsByGenre, m_views);
+        curr->getValue()->updateViewsAfterGroupDelete(m_groupViewsCounter);
         curr->getValue()->assignGroup(0, nullptr, 0);
         curr = curr->getRight();
     }
+}
+
+int Group::getCounterByGenre(Genre genre) const
+{
+    return m_groupViewsCounter[static_cast<int>(genre)];
+}
+
+int *Group::getCounterByGenre()
+{
+    return m_groupViewsCounter;
 }
 

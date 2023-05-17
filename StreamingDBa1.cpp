@@ -84,13 +84,12 @@ StatusType streaming_database::remove_user(int userId)
         return StatusType::FAILURE;
 
     shared_ptr<User> user = userNode->getValue();
-    if (user->isInGroup()) {
-        shared_ptr<Group> group = this->groups.find(user->getGroupId(), this->groups.getRoot())->getValue();
-        group->removeUserViews(user->getViewsByGenre());
-        group->removeUser(userId);
-    }
-
     try {
+        if (user->isInGroup()) {
+            shared_ptr<Group> group = this->groups.find(user->getGroupId(), this->groups.getRoot())->getValue();
+            group->removeUserViews(user);
+            group->removeUser(userId);
+        }
         this->users.remove(userId);
     } catch (std::bad_alloc& e) {
         return StatusType::ALLOCATION_ERROR;
@@ -161,7 +160,7 @@ StatusType streaming_database::add_user_to_group(int userId, int groupId)
     try {
         group->updateViews(user->getViewsByGenre());
         group->insertUser(user);
-        user->assignGroup(group->getId(), group->getViewsByGenre(), group->getTotalViews());
+        user->assignGroup(group->getId(), group->getCounterByGenre(),group->getSize());
     } catch (std::bad_alloc& e) {
         return StatusType::ALLOCATION_ERROR;
     }
@@ -190,7 +189,7 @@ StatusType streaming_database::user_watch(int userId, int movieId)
     movieNode->getValue()->updateViews(1);
     if (user->isInGroup()) {
         shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
-        group->updateViewsSolo(movieNode->getValue()->getGenre());
+        group->soloWatch(movieNode->getValue()->getGenre());
     }
 
     moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movie);
@@ -204,7 +203,6 @@ StatusType streaming_database::group_watch(int groupId,int movieId)
     if (groupId <= 0 || movieId <= 0)
         return StatusType::INVALID_INPUT;
 
-    //TODO: maybe it is possible to make separate function for this
     Node<int, shared_ptr<Group>>* groupNode = this->groups.find(groupId, groups.getRoot());
     if (groupNode == nullptr || groupNode->getValue()->getSize() == 0)
         return StatusType::FAILURE;
@@ -212,7 +210,6 @@ StatusType streaming_database::group_watch(int groupId,int movieId)
     Node<int, shared_ptr<Movie>>* movieNode = this->movies.find(movieId, movies.getRoot());
     if (movieNode == nullptr || (movieNode->getValue()->isVipOnly() && !groupNode->getValue()->isVipGroup()))
         return StatusType::FAILURE;
-    //---------------------------------------------
 
     //watch movie
     shared_ptr<Movie> movie = movieNode->getValue();
@@ -221,7 +218,7 @@ StatusType streaming_database::group_watch(int groupId,int movieId)
     moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
     moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
 
-    group->updateGroupViews(movie->getGenre());
+    group->groupWatch(movie->getGenre());
     movie->updateViews(group->getSize());
 
     moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movie);
@@ -270,17 +267,25 @@ output_t<int> streaming_database::get_num_views(int userId, Genre genre)
 
     int views = 0;
     shared_ptr<User> user = userNode->getValue();
-    if (genre == Genre::NONE) {
+
+    if (genre == Genre::NONE)
+    {
         views += user->getViews();
-        if (user->isInGroup()) {
+        if (user->isInGroup()){
             shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
-            views += group->getTotalViews() - user->getTotalViewsBeforeJoined();
+            views += group->getTotalGroupViews() - user->getTotalGroupViewsBeforeJoined();
         }
-    } else {
-        views += (user->getViewsByGenre(genre));
+    }
+    else
+    {
+        views += user->getViewsByGenre(genre);
         if (user->isInGroup()) {
             shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
-            views += group->getViewsByGenre(genre) - user->getViewsBeforeJoined(genre);
+            int groupCounterByGenre = group->getCounterByGenre(genre);
+            int groupCounterBeforeJoined = user->getGroupCounterBeforeJoined(genre);
+
+            if (groupCounterByGenre - groupCounterBeforeJoined > 0)
+                views += groupCounterByGenre - groupCounterBeforeJoined;
         }
     }
     output_t<int> output(views);

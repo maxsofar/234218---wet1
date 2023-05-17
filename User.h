@@ -26,14 +26,16 @@ public:
     int* getViewsByGenre();
     bool isInGroup() const;
     int getId() const;
-    int getTotalViewsBeforeJoined() const;
-    int getViewsBeforeJoined(Genre genre) const;
+    int getTotalGroupViewsBeforeJoined() const;
+    int* getGroupViewsBeforeJoined();
+    int getGroupSizeBeforeJoined() const;
+    int getGroupCounterBeforeJoined(Genre genre) const;
     /*
      * Setters
      */
     void watchMovie(Genre genre);
-    void assignGroup(int groupId, const int* groupViewsByGenre, int groupViews);
-    void updateViewsAfterGroupDelete(const int* groupViewsByGenre, int groupViews);
+    void assignGroup(int groupId, const int* m_groupViewsCounter, int groupSize);
+    void updateViewsAfterGroupDelete(const int* groupViewsByGenre);
 
 private:
     int m_userId;
@@ -49,8 +51,10 @@ private:
      * The following fields hold the views of the group the user is in before he joined the group.
      * When the group is deleted, the user's views are updated according to these fields.
      */
-    int m_totalViewsBeforeJoined;
+    int m_totalGroupViewsBeforeJoined;
+    int m_groupCounterBeforeJoined[4];
     int m_groupViewsBeforeJoined[4];
+    int m_groupSizeBeforeJoined;
 };
 
 

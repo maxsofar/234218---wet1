@@ -25,19 +25,22 @@ public:
      * Getters
      */
     bool isVipGroup() const;
-    int getTotalViews() const;
+    int getTotalGroupViews() const;
     int getId() const;
     int getSize() const;
     Genre getFavoriteGenre() const;
     int getViewsByGenre(Genre genre) const;
     int* getViewsByGenre();
+    int getCounterByGenre(Genre genre) const;
+    int* getCounterByGenre();
+    int getNetSize() const;
     /*
      * Setters
      */
-    void updateViewsSolo(Genre genre);
+    void soloWatch(Genre genre);
     void updateViews(const int* newMemberViewsByGenre);
-    void removeUserViews(int* viewsByGenre);
-    void updateGroupViews(Genre genre);
+    void removeUserViews(const shared_ptr<User>& user);
+    void groupWatch(Genre genre);
     void insertUser(const shared_ptr<User>& user);
     void removeUser(int userId);
     void updateUsersBeforeDelete();
@@ -47,10 +50,13 @@ private:
     bool m_isVip;
     int m_numVipUsers;
     int m_size;
-    int m_views;
+    //counter by genre
+    int m_groupViewsCounter[4];
+    //total views by genre
     int m_viewsByGenre[4];
     int m_soloViewsByGenre[4];
     Node<int, shared_ptr<User>>* m_users;
+    int m_numUsersNotYetWatched;
 };
 
 #endif //WET_1_GROUP_H
