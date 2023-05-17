@@ -89,7 +89,7 @@ void Group::removeUserViews(const shared_ptr<User>& user)
     int* viewsByGenre = user->getViewsByGenre();
     for (int i = 0; i < 4; ++i) {
         m_soloViewsByGenre[i] -= viewsByGenre[i];
-        int viewsGained = user->getGroupCounterBeforeJoined(static_cast<Genre>(i)) - m_groupViewsCounter[i];
+        int viewsGained = m_groupViewsCounter[i] - user->getGroupCounterBeforeJoined(static_cast<Genre>(i));
         m_viewsByGenre[i] -= viewsGained;
     }
 }
