@@ -42,13 +42,11 @@ Genre Group::getFavoriteGenre() const
     auto favoriteGenre = static_cast<Genre>(0);
     int maxViews = 0;
     for (int i = 0; i < 4; ++i) {
-        int totalViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
+        int totalViews = (m_viewsByGenre[i] * m_size) + m_soloViewsByGenre[i];
         if (totalViews > maxViews) {
             maxViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
             favoriteGenre = static_cast<Genre>(i);
         }
-//        else if (totalViews == maxViews)
-//            favoriteGenre = static_cast<Genre>(0);
     }
 
     return favoriteGenre;
@@ -88,6 +86,7 @@ void Group::updateGroupViews(Genre genre)
 {
     m_views++;
     m_viewsByGenre[static_cast<int>(genre)]++;
+//    m_viewsByGenre[static_cast<int>(genre)] += m_size;
 }
 
 void Group::insertUser(const std::shared_ptr<User>& user)
