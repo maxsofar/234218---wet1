@@ -40,6 +40,7 @@ private:
     int m_rating;
     bool m_vipOnly;
     Genre m_genre;
+    int m_numOfRatings;
 };
 
 #endif //WET1_MOVIE_H

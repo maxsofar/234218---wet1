@@ -39,7 +39,7 @@ int Group::getSize() const
 
 Genre Group::getFavoriteGenre() const
 {
-    Genre favoriteGenre = Genre::NONE;
+    auto favoriteGenre = static_cast<Genre>(0);
     int maxViews = 0;
     for (int i = 0; i < 4; ++i) {
         int totalViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
@@ -47,8 +47,8 @@ Genre Group::getFavoriteGenre() const
             maxViews = m_viewsByGenre[i] + m_soloViewsByGenre[i];
             favoriteGenre = static_cast<Genre>(i);
         }
-        else if (totalViews == maxViews)
-            favoriteGenre = static_cast<Genre>(0);
+//        else if (totalViews == maxViews)
+//            favoriteGenre = static_cast<Genre>(0);
     }
 
     return favoriteGenre;

@@ -5,7 +5,7 @@
 #include "Movie.h"
 
 Movie::Movie(int movieId, Genre genre, int views, bool vipOnly) : m_movieId(movieId), m_views(views), m_rating(0),
-m_vipOnly(vipOnly), m_genre(genre){}
+m_vipOnly(vipOnly), m_genre(genre), m_numOfRatings(0){}
 
 Genre Movie::getGenre() const
 {
@@ -24,8 +24,8 @@ int Movie::getId() const
 
 void Movie::updateRating(int i)
 {
-    if (i > 0)
-        m_rating = (m_rating + i) / 2;
+    m_rating = (m_rating * m_numOfRatings + i) / (m_numOfRatings + 1);
+    m_numOfRatings++;
 }
 
 void Movie::updateViews(int numOfViews)
