@@ -210,6 +210,7 @@ Node<Key, Value>* Tree<Key, Value>::insert(Node<Key, Value>* nodeToInsert ,Node<
         current->setRight(insert(nodeToInsert, current->getRight(), doesExist));
     } else {
         *doesExist = true;
+        delete nodeToInsert;
         return current;
     }
 

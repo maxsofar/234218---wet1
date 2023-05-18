@@ -5,7 +5,7 @@
 #include "Group.h"
 
 Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_groupViewsCounter{0}, m_viewsByGenre{0},
-                            m_soloViewsByGenre{0}, m_users{nullptr}, m_numUsersNotYetWatched(0){}
+                            m_soloViewsByGenre{0}, m_users{nullptr}{}
 
 Group::~Group()
 {
@@ -57,21 +57,6 @@ Genre Group::getFavoriteGenre() const
     return favoriteGenre;
 }
 
-int Group::getViewsByGenre(Genre genre) const
-{
-    return m_viewsByGenre[static_cast<int>(genre)];
-}
-
-int* Group::getViewsByGenre()
-{
-    return m_viewsByGenre;
-}
-
-int Group::getNetSize() const
-{
-    return m_size - m_numUsersNotYetWatched;
-}
-
 void Group::soloWatch(Genre genre)
 {
     m_soloViewsByGenre[static_cast<int>(genre)]++;
@@ -99,7 +84,6 @@ void Group::groupWatch(Genre genre)
     //TODO: check if both needed
     m_groupViewsCounter[static_cast<int>(genre)]++;
     m_viewsByGenre[static_cast<int>(genre)] += m_size;
-    m_numUsersNotYetWatched = 0;
 }
 
 void Group::insertUser(const std::shared_ptr<User>& user)
@@ -119,8 +103,6 @@ void Group::insertUser(const std::shared_ptr<User>& user)
         m_numVipUsers++;
     }
     m_size++;
-    m_numUsersNotYetWatched++;
-
 }
 
 void Group::removeUser(int userId)
@@ -156,7 +138,7 @@ void Group::updateUsersBeforeDelete()
     Node<int, std::shared_ptr<User>>* curr = m_users;
     while (curr != nullptr) {
         curr->getValue()->updateViewsAfterGroupDelete(m_groupViewsCounter);
-        curr->getValue()->assignGroup(0, nullptr, 0);
+        curr->getValue()->assignGroup(0, nullptr);
         curr = curr->getRight();
     }
 }

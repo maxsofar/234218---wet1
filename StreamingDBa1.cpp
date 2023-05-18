@@ -160,7 +160,7 @@ StatusType streaming_database::add_user_to_group(int userId, int groupId)
     try {
         group->updateViews(user->getViewsByGenre());
         group->insertUser(user);
-        user->assignGroup(group->getId(), group->getCounterByGenre(),group->getSize());
+        user->assignGroup(group->getId(), group->getCounterByGenre());
     } catch (std::bad_alloc& e) {
         return StatusType::ALLOCATION_ERROR;
     }

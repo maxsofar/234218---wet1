@@ -27,15 +27,14 @@ public:
     bool isInGroup() const;
     int getId() const;
     int getTotalGroupViewsBeforeJoined() const;
-    int* getGroupViewsBeforeJoined();
-    int getGroupSizeBeforeJoined() const;
+
     int getGroupCounterBeforeJoined(Genre genre) const;
     /*
      * Setters
      */
     void watchMovie(Genre genre);
     //groupViewsCounter is nullptr means group is deleted
-    void assignGroup(int groupId, const int* groupViewsCounter, int groupSize);
+    void assignGroup(int groupId, const int *groupViewsCounter);
     void updateViewsAfterGroupDelete(const int* groupViewsByGenre);
 
 private:
@@ -54,8 +53,6 @@ private:
      */
     int m_totalGroupViewsBeforeJoined;
     int m_groupCounterBeforeJoined[4];
-    int m_groupViewsBeforeJoined[4];
-    int m_groupSizeBeforeJoined;
 };
 
 

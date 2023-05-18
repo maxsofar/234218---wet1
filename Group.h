@@ -29,11 +29,10 @@ public:
     int getId() const;
     int getSize() const;
     Genre getFavoriteGenre() const;
-    int getViewsByGenre(Genre genre) const;
-    int* getViewsByGenre();
+
     int getCounterByGenre(Genre genre) const;
     int* getCounterByGenre();
-    int getNetSize() const;
+
     /*
      * Setters
      */
@@ -56,7 +55,6 @@ private:
     int m_viewsByGenre[4];
     int m_soloViewsByGenre[4];
     Node<int, shared_ptr<User>>* m_users;
-    int m_numUsersNotYetWatched;
 };
 
 #endif //WET_1_GROUP_H
