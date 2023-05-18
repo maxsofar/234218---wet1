@@ -6,30 +6,42 @@
 #define WET1_MOVIE_H
 
 #include "wet1util.h"
-#include "wet1util.h"
 
 class Movie {
 public:
-    // Constructor
+    /*
+     * Constructors
+     */
     Movie(int movieId, Genre genre, int views, bool vipOnly);
-    // Destructor
-    ~Movie();
+    ~Movie() = default;
+    Movie(const Movie&) = default;
+    Movie& operator=(const Movie&) = default;
+    /*
+     * Getters
+     */
     Genre getGenre() const;
     bool isVipOnly() const;
+    int getId() const;
+    /*
+     * Setters
+     */
     void updateRating(int i);
+    void updateViews(int numOfViews);
+    /*
+     * Overloaded operators
+     */
     bool operator<(const Movie& other) const;
     bool operator>(const Movie& other) const;
     bool operator==(const Movie& other) const;
-    int getId() const;
-    void updateViews(int numOfViews);
 
 private:
-    int movieId;
-    Genre genre;
-    int views;
-    bool vipOnly;
-    int rating;
+    int m_movieId;
+    int m_views;
+    double m_rating;
+    bool m_vipOnly;
+    Genre m_genre;
+    int m_numOfRatings;
 };
 
-
 #endif //WET1_MOVIE_H
+

@@ -10,45 +10,52 @@
 #include "Node.h"
 #include <memory>
 
-//TODO:consider inheritance from User
+using std::shared_ptr;
+
 class Group {
 public:
-    // Constructor
+    /*
+     * Constructors
+     */
     explicit Group(int groupId);
-    //Destructor
     ~Group();
+    Group(const Group&) = delete;
+    Group& operator=(const Group&) = delete;
+    /*
+     * Getters
+     */
     bool isVipGroup() const;
-    int getTotalViews() const;
+    int getTotalGroupViews() const;
     int getId() const;
     int getSize() const;
     Genre getFavoriteGenre() const;
-    void updateViewsSolo(Genre genre);
-    void updateViews(const int* newMemberViewsByGenre);
-    void removeUserViews(int* viewsByGenre);
-    void updateGroupViews(Genre genre);
-    int getViewsByGenre(Genre genre);
-    int* getViewsByGenre();
 
-    void insertUser(const std::shared_ptr<User>& user);
+    int getCounterByGenre(Genre genre) const;
+    int* getCounterByGenre();
+
+    /*
+     * Setters
+     */
+    void soloWatch(Genre genre);
+    void updateViews(const int* newMemberViewsByGenre);
+    void removeUserViews(const shared_ptr<User>& user);
+    void groupWatch(Genre genre);
+    void insertUser(const shared_ptr<User>& user);
     void removeUser(int userId);
     void updateUsersBeforeDelete();
 
-
 private:
-    int groupId;
-    bool isVip;
-    int numVipUsers;
-    int size;
-    int groupViews;
-    int groupViewsByGenre[4];
-    int soloViewsByGenre[4];
-    Node<int, std::shared_ptr<User>>* users;
-    //rewrite node to unique ptr
-//    std::unique_ptr<Node<int, std::shared_ptr<User>>> users;
-
-
-
+    int m_groupId;
+    bool m_isVip;
+    int m_numVipUsers;
+    int m_size;
+    //counter by genre
+    int m_groupViewsCounter[4];
+    //total views by genre
+    int m_viewsByGenre[4];
+    int m_soloViewsByGenre[4];
+    Node<int, shared_ptr<User>>* m_users;
 };
 
-
 #endif //WET_1_GROUP_H
+
