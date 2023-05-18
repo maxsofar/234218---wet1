@@ -144,7 +144,6 @@ void Group::removeUser(int userId)
             }
             delete curr;
             m_size--;
-            //TODO:check what about notYetWatched
             break;
         }
         prev = curr;

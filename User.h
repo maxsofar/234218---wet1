@@ -34,7 +34,8 @@ public:
      * Setters
      */
     void watchMovie(Genre genre);
-    void assignGroup(int groupId, const int* m_groupViewsCounter, int groupSize);
+    //groupViewsCounter is nullptr means group is deleted
+    void assignGroup(int groupId, const int* groupViewsCounter, int groupSize);
     void updateViewsAfterGroupDelete(const int* groupViewsByGenre);
 
 private:

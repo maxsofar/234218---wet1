@@ -53,6 +53,7 @@ void User::assignGroup(int groupId, const int* groupViewsCounter, int groupSize)
         for (int &i: this->m_groupCounterBeforeJoined)
             i = 0;
         m_isInGroup = false;
+        m_totalGroupViewsBeforeJoined = 0;
     } else {
         for (int i = 0; i < 4; ++i) {
             m_groupCounterBeforeJoined[i] = groupViewsCounter[i];
