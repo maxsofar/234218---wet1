@@ -238,6 +238,8 @@ output_t<int> streaming_database::get_all_movies_count(Genre genre)
 
 StatusType streaming_database::get_all_movies(Genre genre, int* const output)
 {
+    int counter = 0;
+    counter++;
     if (output == nullptr)
         return StatusType::INVALID_INPUT;
 
@@ -308,13 +310,12 @@ StatusType streaming_database::rate_movie(int userId, int movieId, int rating)
     //---------------------------------------------
 
     shared_ptr<Movie> movie = movieNode->getValue();
-    if (rating > 0) {
-        moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
-        moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
-        movie->updateRating(rating);
-        moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movie);
-        moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movie);
-    }
+    moviesByGenre[static_cast<int>(movie->getGenre())].remove(*movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].remove(*movie);
+    movie->updateRating(rating);
+    moviesByGenre[static_cast<int>(movie->getGenre())].insert(*movie, movie);
+    moviesByGenre[static_cast<int>(Genre::NONE)].insert(*movie, movie);
+
     //---------------------------------------------
     return StatusType::SUCCESS;
 }
