@@ -4,6 +4,8 @@
 
 #include "Group.h"
 
+using userSharedPtr = std::shared_ptr<User>;
+
 Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_groupViewsCounter{0}, m_viewsByGenre{0},
                             m_soloViewsByGenre{0}, m_users{nullptr}{}
 
@@ -69,7 +71,7 @@ void Group::updateViews(const int* newMemberViewsByGenre)
     }
 }
 
-void Group::removeUserViews(const shared_ptr<User>& user)
+void Group::removeUserViews(const userSharedPtr& user)
 {
     int* viewsByGenre = user->getViewsByGenre();
     for (int i = 0; i < 4; ++i) {
@@ -81,7 +83,6 @@ void Group::removeUserViews(const shared_ptr<User>& user)
 
 void Group::groupWatch(Genre genre)
 {
-    //TODO: check if both needed
     m_groupViewsCounter[static_cast<int>(genre)]++;
     m_viewsByGenre[static_cast<int>(genre)] += m_size;
 }

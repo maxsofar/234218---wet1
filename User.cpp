@@ -4,6 +4,8 @@
 
 #include "User.h"
 
+using groupSharedPtr = std::shared_ptr<Group>;
+
 User::User(int userId, bool isVip) : m_userId(userId), m_groupId(0), m_isVip(isVip), m_isInGroup(false),
 m_views(0), m_viewsByGenre{0}, m_totalGroupViewsBeforeJoined(0), m_groupCounterBeforeJoined{0}{}
 
@@ -43,7 +45,7 @@ void User::watchMovie(Genre genre)
     m_viewsByGenre[static_cast<int>(genre)]++;
 }
 
-void User::assignGroup(int groupId, const int *groupViewsCounter, const std::shared_ptr<Group>& group)
+void User::assignGroup(int groupId, const int *groupViewsCounter, const groupSharedPtr& group)
 {
     m_groupId = groupId;
     m_group = group;
@@ -86,7 +88,7 @@ int User::getTotalGroupViewsBeforeJoined() const
     return m_totalGroupViewsBeforeJoined;
 }
 
-std::shared_ptr<Group> User::getGroup() const
+groupSharedPtr User::getGroup() const
 {
     return m_group.lock();
 }

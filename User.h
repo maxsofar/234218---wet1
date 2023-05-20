@@ -10,6 +10,8 @@
 
 class Group;
 
+using groupSharedPtr = std::shared_ptr<Group>;
+
 class User {
 public:
     /*
@@ -31,13 +33,13 @@ public:
     int getId() const;
     int getTotalGroupViewsBeforeJoined() const;
     int getGroupCounterBeforeJoined(Genre genre) const;
-    std::shared_ptr<Group> getGroup() const;
+    groupSharedPtr getGroup() const;
     /*
      * Setters
      */
     void watchMovie(Genre genre);
     //groupViewsCounter is nullptr means group is deleted
-    void assignGroup(int groupId, const int *groupViewsCounter, const std::shared_ptr<Group>& group);
+    void assignGroup(int groupId, const int *groupViewsCounter, const groupSharedPtr& group);
     void updateViewsAfterGroupDelete(const int* groupViewsByGenre);
 
 private:

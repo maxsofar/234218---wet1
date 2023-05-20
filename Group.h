@@ -10,7 +10,7 @@
 #include "Node.h"
 #include <memory>
 
-using std::shared_ptr;
+using userSharedPtr = std::shared_ptr<User>;
 
 class Group {
 public:
@@ -37,9 +37,9 @@ public:
      */
     void soloWatch(Genre genre);
     void updateViews(const int* newMemberViewsByGenre);
-    void removeUserViews(const shared_ptr<User>& user);
+    void removeUserViews(const userSharedPtr& user);
     void groupWatch(Genre genre);
-    void insertUser(const shared_ptr<User>& user);
+    void insertUser(const userSharedPtr& user);
     void removeUser(int userId);
     void updateUsersBeforeDelete();
 
@@ -53,7 +53,7 @@ private:
     //total views by genre
     int m_viewsByGenre[4];
     int m_soloViewsByGenre[4];
-    Node<int, shared_ptr<User>>* m_users;
+    Node<int, userSharedPtr>* m_users;
 };
 
 #endif //WET_1_GROUP_H
