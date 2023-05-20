@@ -238,8 +238,6 @@ output_t<int> streaming_database::get_all_movies_count(Genre genre)
 
 StatusType streaming_database::get_all_movies(Genre genre, int* const output)
 {
-    int counter = 0;
-    counter++;
     if (output == nullptr)
         return StatusType::INVALID_INPUT;
 
