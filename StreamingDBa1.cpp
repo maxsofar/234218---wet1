@@ -91,7 +91,7 @@ StatusType streaming_database::remove_user(int userId)
     userSharedPtr user = userNode->getValue();
     try {
         if (user->isInGroup()) {
-            groupSharedPtr group = this->groups.find(user->getGroupId(), this->groups.getRoot())->getValue();
+            groupSharedPtr group = user->getGroup();
             group->removeUserViews(user);
             group->removeUser(userId);
         }
