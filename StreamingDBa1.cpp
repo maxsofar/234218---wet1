@@ -272,7 +272,7 @@ output_t<int> streaming_database::get_num_views(int userId, Genre genre)
     {
         views += user->getViews();
         if (user->isInGroup()){
-            shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
+            shared_ptr<Group> group = user->getGroup();
             views += group->getTotalGroupViews() - user->getTotalGroupViewsBeforeJoined();
         }
     }
@@ -280,7 +280,7 @@ output_t<int> streaming_database::get_num_views(int userId, Genre genre)
     {
         views += user->getViewsByGenre(genre);
         if (user->isInGroup()) {
-            shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
+            shared_ptr<Group> group = user->getGroup();
             int groupCounterByGenre = group->getCounterByGenre(genre);
             int groupCounterBeforeJoined = user->getGroupCounterBeforeJoined(genre);
 
