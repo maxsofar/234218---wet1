@@ -29,7 +29,6 @@ public:
     int getId() const;
     int getSize() const;
     Genre getFavoriteGenre() const;
-
     int getCounterByGenre(Genre genre) const;
     int* getCounterByGenre();
 

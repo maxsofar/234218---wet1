@@ -138,7 +138,7 @@ void Group::updateUsersBeforeDelete()
     Node<int, std::shared_ptr<User>>* curr = m_users;
     while (curr != nullptr) {
         curr->getValue()->updateViewsAfterGroupDelete(m_groupViewsCounter);
-        curr->getValue()->assignGroup(0, nullptr);
+        curr->getValue()->assignGroup(0, nullptr, nullptr);
         curr = curr->getRight();
     }
 }

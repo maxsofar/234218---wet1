@@ -160,7 +160,7 @@ StatusType streaming_database::add_user_to_group(int userId, int groupId)
     try {
         group->updateViews(user->getViewsByGenre());
         group->insertUser(user);
-        user->assignGroup(group->getId(), group->getCounterByGenre());
+        user->assignGroup(group->getId(), group->getCounterByGenre(), groupNode->getValue());
     } catch (std::bad_alloc& e) {
         return StatusType::ALLOCATION_ERROR;
     }
@@ -188,7 +188,7 @@ StatusType streaming_database::user_watch(int userId, int movieId)
     user->watchMovie(movieNode->getValue()->getGenre());
     movieNode->getValue()->updateViews(1);
     if (user->isInGroup()) {
-        shared_ptr<Group> group = this->groups.find(user->getGroupId(), groups.getRoot())->getValue();
+        shared_ptr<Group> group = user->getGroup();
         group->soloWatch(movieNode->getValue()->getGenre());
     }
 

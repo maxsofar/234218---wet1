@@ -6,6 +6,9 @@
 #define WET_1_USER_H
 
 #include "wet1util.h"
+#include <memory>
+
+class Group;
 
 class User {
 public:
@@ -27,14 +30,14 @@ public:
     bool isInGroup() const;
     int getId() const;
     int getTotalGroupViewsBeforeJoined() const;
-
     int getGroupCounterBeforeJoined(Genre genre) const;
+    std::shared_ptr<Group> getGroup() const;
     /*
      * Setters
      */
     void watchMovie(Genre genre);
     //groupViewsCounter is nullptr means group is deleted
-    void assignGroup(int groupId, const int *groupViewsCounter);
+    void assignGroup(int groupId, const int *groupViewsCounter, const std::shared_ptr<Group>& group);
     void updateViewsAfterGroupDelete(const int* groupViewsByGenre);
 
 private:
@@ -42,6 +45,7 @@ private:
     int m_groupId;
     bool m_isVip;
     bool m_isInGroup;
+    std::weak_ptr<Group> m_group;
     /*
      * The following fields hold the user's solo views.
      */
