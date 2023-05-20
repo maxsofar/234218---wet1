@@ -26,10 +26,10 @@ using std::shared_ptr;
 
 class streaming_database {
 private:
-    Tree<int, shared_ptr<Movie>> movies;
-    Tree<int, shared_ptr<User>> users;
-    Tree<int, shared_ptr<Group>> groups;
-    Tree<Movie, shared_ptr<Movie>> moviesByGenre[5];
+    Tree<int, shared_ptr<Movie>> m_movies;
+    Tree<int, shared_ptr<User>> m_users;
+    Tree<int, shared_ptr<Group>> m_groups;
+    Tree<Movie, shared_ptr<Movie>> m_moviesByGenre[5];
 
 public:
 	// <DO-NOT-MODIFY> {

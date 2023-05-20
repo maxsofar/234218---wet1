@@ -31,6 +31,7 @@ public:
     Node<Key, Value>* find(const Key& key, Node<Key, Value>* current) const;
     Node<Key, Value>* findMin(Node<Key, Value>* current) const;
     void inOrder(Node<Key, Value>* current, int* output, int& pos);
+    void updateUsersBeforeDelete(Node<Key, Value>* current, const int* groupViewsByGenre);
     Value& getMinNodeValue() const;
 
 private:
@@ -47,6 +48,19 @@ private:
     Node<Key, Value>* remove(const Key& key, Node<Key, Value>* current, bool* doesExist);
     static int max(int a, int b);
 };
+
+template<class Key, class Value>
+void Tree<Key, Value>::updateUsersBeforeDelete(Node<Key, Value>* current, const int* groupViewsByGenre)
+{
+    if (current == nullptr)
+        return;
+
+    updateUsersBeforeDelete(current->getLeft(), groupViewsByGenre);
+    current->getValue()->updateViewsAfterGroupDelete(groupViewsByGenre);
+    current->getValue()->assignGroup(0, nullptr, nullptr);
+    updateUsersBeforeDelete(current->getRight(), groupViewsByGenre);
+
+}
 
 template <class Key, class Value>
 Tree<Key, Value>::Tree() : m_root(nullptr), m_minNode(nullptr), size(0) {}
@@ -100,7 +114,6 @@ int Tree<Key, Value>::getSize() const
     return size;
 }
 
-//TODO: maybe write as more general and not specified for movies
 template<class Key, class Value>
 void Tree<Key, Value>::inOrder(Node<Key, Value>*current, int* output, int& pos)
 {

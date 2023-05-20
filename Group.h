@@ -8,6 +8,7 @@
 #include "wet1util.h"
 #include "User.h"
 #include "Node.h"
+#include "Tree.h"
 #include <memory>
 
 using userSharedPtr = std::shared_ptr<User>;
@@ -18,7 +19,7 @@ public:
      * Constructors
      */
     explicit Group(int groupId);
-    ~Group();
+    ~Group() = default;
     Group(const Group&) = delete;
     Group& operator=(const Group&) = delete;
     /*
@@ -53,7 +54,9 @@ private:
     //total views by genre
     int m_viewsByGenre[4];
     int m_soloViewsByGenre[4];
-    Node<int, userSharedPtr>* m_users;
+//    Node<int, userSharedPtr>* m_users;
+    Tree<int, userSharedPtr> m_users;
+
 };
 
 #endif //WET_1_GROUP_H

@@ -7,17 +7,7 @@
 using userSharedPtr = std::shared_ptr<User>;
 
 Group::Group(int groupId) : m_groupId(groupId), m_isVip(false), m_numVipUsers(0), m_size(0), m_groupViewsCounter{0}, m_viewsByGenre{0},
-                            m_soloViewsByGenre{0}, m_users{nullptr}{}
-
-Group::~Group()
-{
-    Node<int, std::shared_ptr<User>>* curr = m_users;
-    while (curr != nullptr) {
-        Node<int, std::shared_ptr<User>>* temp = curr;
-        curr = curr->getRight();
-        delete temp;
-    }
-}
+                            m_soloViewsByGenre{0}{}
 
 bool Group::isVipGroup() const
 {
@@ -89,15 +79,8 @@ void Group::groupWatch(Genre genre)
 
 void Group::insertUser(const std::shared_ptr<User>& user)
 {
-    if (m_users == nullptr) {
-        m_users = new Node<int, std::shared_ptr<User>>(user->getId(), user);
-    } else {
-        Node<int, std::shared_ptr<User>>* curr = m_users;
-        while (curr->getRight() != nullptr) {
-            curr = curr->getRight();
-        }
-        curr->setRight(new Node<int, std::shared_ptr<User>>(user->getId(), user));
-    }
+    int userId = user->getId();
+    m_users.insert(userId, user);
 
     if (user->isVipUser()) {
         m_isVip = true;
@@ -106,42 +89,21 @@ void Group::insertUser(const std::shared_ptr<User>& user)
     m_size++;
 }
 
-void Group::removeUser(int userId)
-{
-    Node<int, std::shared_ptr<User>>* curr = m_users;
-    Node<int, std::shared_ptr<User>>* prev = nullptr;
-
-    while (curr != nullptr) {
-        if (curr->getKey() == userId) {
-            if (curr->getValue()->isVipUser()) {
-                m_numVipUsers--;
-                if (m_numVipUsers == 0) {
-                    m_isVip = false;
-                }
-            }
-
-            if (prev == nullptr) {
-                m_users = curr->getRight();
-            } else {
-                prev->setRight(curr->getRight());
-            }
-            delete curr;
-            m_size--;
-            break;
+void Group::removeUser(int userId) {
+    Node<int, userSharedPtr>* userNode = m_users.find(userId, m_users.getRoot());
+    if (userNode->getValue()->isVipUser()) {
+        m_numVipUsers--;
+        if (m_numVipUsers == 0) {
+            m_isVip = false;
         }
-        prev = curr;
-        curr = curr->getRight();
     }
+    m_users.remove(userId);
+    m_size--;
 }
 
 void Group::updateUsersBeforeDelete()
 {
-    Node<int, std::shared_ptr<User>>* curr = m_users;
-    while (curr != nullptr) {
-        curr->getValue()->updateViewsAfterGroupDelete(m_groupViewsCounter);
-        curr->getValue()->assignGroup(0, nullptr, nullptr);
-        curr = curr->getRight();
-    }
+    m_users.updateUsersBeforeDelete(m_users.getRoot(), m_groupViewsCounter);
 }
 
 int Group::getCounterByGenre(Genre genre) const
