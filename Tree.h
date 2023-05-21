@@ -37,7 +37,7 @@ public:
 private:
     Node<Key, Value>* m_root;
     unique_ptr<Node<Key, Value>> m_minNode;
-    int size;
+    int m_size;
     /*
      * Private Methods
      */
@@ -63,7 +63,7 @@ void Tree<Key, Value>::updateUsersBeforeDelete(Node<Key, Value>* current, const 
 }
 
 template <class Key, class Value>
-Tree<Key, Value>::Tree() : m_root(nullptr), m_minNode(nullptr), size(0) {}
+Tree<Key, Value>::Tree() : m_root(nullptr), m_minNode(nullptr), m_size(0) {}
 
 template<class Key, class Value>
 void Tree<Key, Value>::deleteTree(Node<Key, Value>* current)
@@ -111,7 +111,7 @@ Value& Tree<Key, Value>::getMinNodeValue() const
 template<class Key, class Value>
 int Tree<Key, Value>::getSize() const
 {
-    return size;
+    return m_size;
 }
 
 template<class Key, class Value>
@@ -213,7 +213,7 @@ template<class Key, class Value>
 Node<Key, Value>* Tree<Key, Value>::insert(Node<Key, Value>* nodeToInsert ,Node<Key, Value>* current, bool* doesExist)
 {
     if (current == nullptr) {
-        this->size++;
+        this->m_size++;
         return nodeToInsert;
     }
 
@@ -239,7 +239,7 @@ bool Tree<Key, Value>::insert(const Key& key, const Value& value)
     if (this->m_root == nullptr) {
         this->m_root = new Node<Key, Value>(key, value);
         this->m_minNode = unique_ptr<Node<Key, Value>>(new Node<Key, Value>(key, value));
-        this->size++;
+        this->m_size++;
     }
     else if (key == this->m_minNode->getKey()) {
         return true;
@@ -283,7 +283,7 @@ Node<Key, Value>* Tree<Key, Value>::remove(const Key& key, Node<Key, Value>* cur
                 *current = *temp;
             }
             delete temp;
-            this->size--;
+            this->m_size--;
         }
         // Case 2: Two children
         else

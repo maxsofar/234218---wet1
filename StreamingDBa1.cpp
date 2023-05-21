@@ -216,7 +216,6 @@ StatusType streaming_database::group_watch(int groupId,int movieId)
     if (movieNode == nullptr || (movieNode->getValue()->isVipOnly() && !groupNode->getValue()->isVipGroup()))
         return StatusType::FAILURE;
 
-    //watch movie
     movieSharedPtr movie = movieNode->getValue();
     groupSharedPtr group = groupNode->getValue();
 

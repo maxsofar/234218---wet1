@@ -54,7 +54,6 @@ private:
     //total views by genre
     int m_viewsByGenre[4];
     int m_soloViewsByGenre[4];
-//    Node<int, userSharedPtr>* m_users;
     Tree<int, userSharedPtr> m_users;
 
 };
