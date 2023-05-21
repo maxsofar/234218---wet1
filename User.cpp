@@ -4,8 +4,10 @@
 
 #include "User.h"
 
-User::User(int userId, bool isVip) : m_userId(userId), m_groupId(0), m_isVip(isVip), m_isInGroup(false), m_views(0),
-m_viewsByGenre{0}, m_totalGroupViewsBeforeJoined(0), m_groupCounterBeforeJoined{0}{}
+using groupSharedPtr = std::shared_ptr<Group>;
+
+User::User(int userId, bool isVip) : m_userId(userId), m_groupId(0), m_isVip(isVip), m_isInGroup(false),
+m_views(0), m_viewsByGenre{0}, m_totalGroupViewsBeforeJoined(0), m_groupCounterBeforeJoined{0}{}
 
 bool User::isVipUser() const
 {
@@ -43,9 +45,10 @@ void User::watchMovie(Genre genre)
     m_viewsByGenre[static_cast<int>(genre)]++;
 }
 
-void User::assignGroup(int groupId, const int *groupViewsCounter)
+void User::assignGroup(int groupId, const int *groupViewsCounter, const groupSharedPtr& group)
 {
     m_groupId = groupId;
+    m_group = group;
 
     if (groupViewsCounter == nullptr) {
         for (int &i: this->m_groupCounterBeforeJoined)
@@ -83,5 +86,10 @@ int User::getGroupCounterBeforeJoined(Genre genre) const
 int User::getTotalGroupViewsBeforeJoined() const
 {
     return m_totalGroupViewsBeforeJoined;
+}
+
+groupSharedPtr User::getGroup() const
+{
+    return m_group.lock();
 }
 
